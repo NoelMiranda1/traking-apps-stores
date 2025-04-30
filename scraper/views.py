@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .models import AppInfo, AppToMonitor
 from .services import check_all_apps, format_timestamp, format_ios_date
 from django.db.models import Max
@@ -7,6 +8,7 @@ from django.http import HttpResponse
 from openpyxl import Workbook
 from datetime import datetime
 
+@login_required
 def export_to_excel(request):
     # Crear un nuevo libro de Excel
     wb = Workbook()
@@ -16,45 +18,41 @@ def export_to_excel(request):
     ws_android.title = "Google Play Apps"
     ws_android.append(['Nombre', 'ID', 'Versión', 'Última actualización'])
     
-    # Obtener y escribir datos de apps de Android
-    android_apps = AppInfo.objects.filter(
-        store='google_play',
-        created_at__in=AppInfo.objects.filter(
-            store='google_play'
-        ).values('app_id').annotate(
-            max_created=Max('created_at')
-        ).values_list('max_created', flat=True)
-    ).order_by('app_name')
-    
-    for app in android_apps:
-        ws_android.append([
-            app.app_name,
-            app.app_id,
-            app.version,
-            app.last_updated
-        ])
+    # Obtener todas las apps de Android que están siendo monitoreadas
+    monitored_android = AppToMonitor.objects.filter(store='google_play')
+    for monitored_app in monitored_android:
+        latest_app = AppInfo.objects.filter(
+            store='google_play',
+            app_id=monitored_app.app_id
+        ).order_by('-created_at').first()
+        
+        if latest_app:
+            ws_android.append([
+                latest_app.app_name,
+                latest_app.app_id,
+                latest_app.version,
+                latest_app.last_updated
+            ])
     
     # Crear hoja para iOS
     ws_ios = wb.create_sheet("iOS Apps")
     ws_ios.append(['Nombre', 'ID', 'Versión', 'Última actualización'])
     
-    # Obtener y escribir datos de apps de iOS
-    ios_apps = AppInfo.objects.filter(
-        store='app_store',
-        created_at__in=AppInfo.objects.filter(
-            store='app_store'
-        ).values('app_id').annotate(
-            max_created=Max('created_at')
-        ).values_list('max_created', flat=True)
-    ).order_by('app_name')
-    
-    for app in ios_apps:
-        ws_ios.append([
-            app.app_name,
-            app.app_id,
-            app.version,
-            app.last_updated
-        ])
+    # Obtener todas las apps de iOS que están siendo monitoreadas
+    monitored_ios = AppToMonitor.objects.filter(store='app_store')
+    for monitored_app in monitored_ios:
+        latest_app = AppInfo.objects.filter(
+            store='app_store',
+            app_id=monitored_app.app_id
+        ).order_by('-created_at').first()
+        
+        if latest_app:
+            ws_ios.append([
+                latest_app.app_name,
+                latest_app.app_id,
+                latest_app.version,
+                latest_app.last_updated
+            ])
     
     # Ajustar el ancho de las columnas
     for ws in [ws_android, ws_ios]:
@@ -81,6 +79,7 @@ def export_to_excel(request):
     wb.save(response)
     return response
 
+@login_required
 def app_list(request):
     if request.method == 'POST':
         if 'update' in request.POST:
