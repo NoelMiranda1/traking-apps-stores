@@ -95,7 +95,8 @@ def app_list(request):
             if app_id and store:
                 try:
                     AppToMonitor.objects.create(app_id=app_id, store=store)
-                    messages.success(request, f'App {app_id} agregada correctamente')
+                    check_all_apps()
+                    messages.success(request, f'App {app_id} agregada y actualizada correctamente')
                 except Exception as e:
                     messages.error(request, f'Error al agregar la app: {str(e)}')
             else:
