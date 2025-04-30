@@ -26,10 +26,10 @@ SECRET_KEY = 'django-insecure-6l&(+j^ib$avbbcq+x16xdchbha^kz&g#^qaw3&32_t=xcay3r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', '0.0.0.0', 'mobile_tracking.playbypoint.dev']
+ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', '0.0.0.0', 'mobile-tracking.playbypoint.dev']
 
 # Add this setting
-CSRF_TRUSTED_ORIGINS = ['http://localhost:4444', 'https://mobile_tracking.playbypoint.dev']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4444', 'http://localhost:4444/admin/', 'https://mobile-tracking.playbypoint.dev', 'https://mobile-tracking.playbypoint.dev/admin/']
 
 
 # Application definition
