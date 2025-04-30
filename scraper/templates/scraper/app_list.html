@@ -67,12 +67,20 @@
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>App Version Tracker</h1>
-            <form method="post" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" name="export" class="btn btn-export">
-                    <i class="bi bi-download"></i> Export
-                </button>
-            </form>
+            <div class="d-flex gap-2">
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" name="export" class="btn btn-export">
+                        <i class="bi bi-download"></i> Export
+                    </button>
+                </form>
+                <form method="post" action="{% url 'scraper:logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </form>
+            </div>
         </div>
 
         {% if messages %}
