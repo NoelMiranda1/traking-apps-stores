@@ -15,6 +15,13 @@
             background-color: #218838;
             color: white;
         }
+        .btn-success {
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
         .update-info {
             font-size: 0.9em;
             color: #6c757d;
@@ -29,6 +36,30 @@
         .table tbody tr:hover {
             background-color: #f8f9fa;
             transform: scale(1.01);
+        }
+        .card {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+        }
+        .search-container {
+            margin: 20px 0;
+        }
+        #searchInput {
+            border-radius: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+        #searchInput:focus {
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+            border-color: #28a745;
         }
     </style>
 </head>
@@ -47,8 +78,9 @@
         {% if messages %}
         <div class="messages mb-4">
             {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
                 {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endfor %}
         </div>
@@ -76,24 +108,16 @@
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button type="submit" name="add_app" class="btn btn-success w-100" id="addButton" disabled>
-                            Add
+                            <i class="bi bi-plus-circle"></i> Add
                         </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Formulario para actualizar información -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <form method="post" class="me-2">
-                {% csrf_token %}
-                <button type="submit" name="update" class="btn btn-primary">
-                    <i class="bi bi-arrow-clockwise"></i> Update Information
-                </button>
-            </form>
-            <div class="flex-grow-1 mx-3">
-                <input type="text" class="form-control" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()">
-            </div>
+        <!-- Search bar -->
+        <div class="search-container">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search apps..." onkeyup="filterApps()">
         </div>
 
         <!-- Tabla de todas las apps -->
